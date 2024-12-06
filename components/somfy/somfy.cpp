@@ -42,7 +42,8 @@ void SomfyComponent::send_command(SomfyCommand command, uint32_t repeat) {
   // crc
   uint8_t crc = 0;
   for (uint8_t i = 0; i < 7; i++) {
-    crc ^= frame[i] ^ (frame[i] >> 4);
+    crc ^= frame[i];
+    crc ^= frame[i] >> 4;
   }
   frame[1] |= crc & 0xF;
 
@@ -58,14 +59,14 @@ void SomfyComponent::send_command(SomfyCommand command, uint32_t repeat) {
   ESP_LOGD(TAG, "Somfy sending 0x%" PRIX8 " repeated %" PRIu32 " times", command, repeat);
 
   // send wakup
-  esphome::remote_base::RawTimings wakeup = {+9415, -9565};
+  esphome::remote_base::RawTimings timings = {+9415, -9565};
   auto call = id(this->tx_).transmit();
-  call.get_data()->set_data(wakeup);
+  call.get_data()->set_data(timings);
   call.perform();
   delay(80);
 
   // send frame
-  for (uint32_t i = 0; i < repeat; i++) {
+  for (uint32_t i = 0; i < (repeat + 1); i++) {
     esphome::remote_base::RawTimings timings = {};
 
     // hardware sync, two sync for the first frame, seven for the following ones
@@ -82,7 +83,7 @@ void SomfyComponent::send_command(SomfyCommand command, uint32_t repeat) {
     // data
     for (uint8_t byte : frame) {
       for (uint32_t j = 0; j < 8; j++) {
-        if ((byte >> 7) & 1) {
+        if ((byte & 0x80) != 0) {
           timings.push_back(-SYMBOL);
           timings.push_back(+SYMBOL);
         } else {
@@ -94,10 +95,11 @@ void SomfyComponent::send_command(SomfyCommand command, uint32_t repeat) {
     }
 
     // send + inter frame silence
+    timings.push_back(-415);
     auto call = id(this->tx_).transmit();
     call.get_data()->set_data(timings);
     call.perform();
-    if (i < repeat - 1) {
+    if (i < repeat) {
       delay(30);
     }
   }
