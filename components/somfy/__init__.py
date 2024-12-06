@@ -19,15 +19,15 @@ SomfySetCodeAction = somfy_ns.class_("SomfySetCodeAction", automation.Action)
 
 SomfyCommand = somfy_ns.enum("SomfyCommand")
 SOMFY_COMMAND = {
-    "SOMFY_MY": SomfyCommand.SOMFY_MY,
-    "SOMFY_UP": SomfyCommand.SOMFY_UP,
-    "SOMFY_MYUP": SomfyCommand.SOMFY_MYUP,
-    "SOMFY_DOWN": SomfyCommand.SOMFY_DOWN,
-    "SOMFY_MYDOWN": SomfyCommand.SOMFY_MYDOWN,
-    "SOMFY_UPDOWN": SomfyCommand.SOMFY_UPDOWN,
-    "SOMFY_PROG": SomfyCommand.SOMFY_PROG,
-    "SOMFY_SUNFLAG": SomfyCommand.SOMFY_SUNFLAG,
-    "SOMFY_FLAG": SomfyCommand.SOMFY_FLAG,
+    "MY": SomfyCommand.SOMFY_MY,
+    "UP": SomfyCommand.SOMFY_UP,
+    "MYUP": SomfyCommand.SOMFY_MYUP,
+    "DOWN": SomfyCommand.SOMFY_DOWN,
+    "MYDOWN": SomfyCommand.SOMFY_MYDOWN,
+    "UPDOWN": SomfyCommand.SOMFY_UPDOWN,
+    "PROG": SomfyCommand.SOMFY_PROG,
+    "SUNFLAG": SomfyCommand.SOMFY_SUNFLAG,
+    "FLAG": SomfyCommand.SOMFY_FLAG,
 }
 
 CONFIG_SCHEMA = cv.Schema(

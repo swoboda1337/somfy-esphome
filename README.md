@@ -39,7 +39,7 @@ Example yaml to use in esphome device config:
           then:
             - somfy.send_command: 
                 id: remote_1
-                command: SOMFY_UP
+                command: UP
                 repeat: 1
 
-Valid commands are: SOMFY_MY, SOMFY_UP, SOMFY_MYUP, SOMFY_DOWN, SOMFY_MYDOWN, SOMFY_UPDOWN, SOMFY_PROG, SOMFY_SUNFLAG, SOMFY_FLAG
+Valid commands are: MY, UP, MYUP, DOWN, MYDOWN, UPDOWN, PROG, SUNFLAG, FLAG
