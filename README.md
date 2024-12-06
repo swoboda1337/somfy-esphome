@@ -1,4 +1,6 @@
-ESPHome Somfy Remote Component. NOTE: This is a work in progress.
+NOTE: This is a work in progress.
+
+ESPHome Somfy Remote Component. 
 
 Example yaml (valid commands are MY, UP, MYUP, DOWN, MYDOWN, UPDOWN, PROG, SUNFLAG, FLAG):
 
