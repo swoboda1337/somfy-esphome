@@ -2,6 +2,13 @@ ESPHome Somfy Remote Component.
 
 Example yaml to use in esphome device config:
 
+    external_components:
+    - source:
+        type: git
+        url: https://github.com/swoboda1337/somfy-esphome
+        ref: main
+      refresh: 5min
+
     somfy:
       - address: 0x11111111
         id: remote_1
@@ -35,15 +42,4 @@ Example yaml to use in esphome device config:
                 command: SOMFY_UP
                 repeat: 1
 
-Valid commands are:
-
-    SOMFY_MY
-    SOMFY_UP
-    SOMFY_MYUP
-    SOMFY_DOWN
-    SOMFY_MYDOWN
-    SOMFY_UPDOWN
-    SOMFY_PROG
-    SOMFY_SUNFLAG
-    SOMFY_FLAG
-
+Valid commands are: SOMFY_MY, SOMFY_UP, SOMFY_MYUP, SOMFY_DOWN, SOMFY_MYDOWN, SOMFY_UPDOWN, SOMFY_PROG, SOMFY_SUNFLAG, SOMFY_FLAG
