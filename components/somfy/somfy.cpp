@@ -2,6 +2,7 @@
 #include "esphome/core/helpers.h"
 #include "esphome/core/hal.h"
 #include "somfy.h"
+#include <cinttypes>
 
 namespace esphome {
 namespace somfy {
