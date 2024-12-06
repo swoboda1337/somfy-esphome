@@ -1,4 +1,6 @@
-ESPHome Somfy Remote Component. 
+ESPHome Somfy Remote Component.
+
+NOTE: This is a work in progress.
 
 Example yaml to use in esphome device config:
 
