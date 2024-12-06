@@ -11,7 +11,7 @@ static const int32_t SYMBOL = 640;
 
 void SomfyComponent::dump_config() {
   ESP_LOGCONFIG(TAG, "Somfy:");
-  ESP_LOGCONFIG(TAG, "  Name: %" PRIX32, this->address_);
+  ESP_LOGCONFIG(TAG, "  Name: %" PRIx32, this->address_);
   ESP_LOGCONFIG(TAG, "  Code: %" PRIu16, this->code_);
 }
 
