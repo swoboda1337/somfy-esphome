@@ -20,9 +20,7 @@ Example yaml to use in esphome device config:
         id: remote_4
 
     remote_transmitter:
-      pin:
-        number: GPIO20
-        allow_other_uses: true
+      pin: GPIO20
       carrier_duty_percent: 100%
 
     button:
