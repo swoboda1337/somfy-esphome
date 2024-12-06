@@ -10,10 +10,12 @@ MULTI_CONF = True
 CONF_TRANSMITTER_ID = "transmitter_id"
 CONF_COMMAND = "command"
 CONF_REPEAT = "repeat"
+CONF_CODE = "code"
 
 somfy_ns = cg.esphome_ns.namespace("somfy")
 SomfyComponent = somfy_ns.class_("SomfyComponent", cg.Component)
 SomfySendCommandAction = somfy_ns.class_("SomfySendCommandAction", automation.Action)
+SomfySetCodeAction = somfy_ns.class_("SomfySetCodeAction", automation.Action)
 
 SomfyCommand = somfy_ns.enum("SomfyCommand")
 SOMFY_COMMAND = {
@@ -57,11 +59,28 @@ async def to_code(config):
         }
     ),
 )
-async def text_sensor_template_publish_to_code(config, action_id, template_arg, args):
+async def somfy_send_command_to_code(config, action_id, template_arg, args):
     paren = await cg.get_variable(config[CONF_ID])
     var = cg.new_Pvariable(action_id, template_arg, paren)
     command = await cg.templatable(config[CONF_COMMAND], args, SomfyCommand)
     repeat = await cg.templatable(config[CONF_REPEAT], args, cg.uint32)
     cg.add(var.set_command(command))
     cg.add(var.set_repeat(repeat))
+    return var
+
+@automation.register_action(
+    "somfy.set_code",
+    SomfySetCodeAction,
+    cv.Schema(
+        {
+            cv.Required(CONF_ID): cv.use_id(SomfyComponent),
+            cv.Required(CONF_CODE): cv.templatable(cv.uint16_t),
+        }
+    ),
+)
+async def somfy_set_code_to_code(config, action_id, template_arg, args):
+    paren = await cg.get_variable(config[CONF_ID])
+    var = cg.new_Pvariable(action_id, template_arg, paren)
+    code = await cg.templatable(config[CONF_CODE], args, cg.uint16)
+    cg.add(var.set_code(code))
     return var

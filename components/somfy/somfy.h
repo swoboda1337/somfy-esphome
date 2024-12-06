@@ -24,6 +24,7 @@ class SomfyComponent : public Component {
   void setup() override;
   void dump_config() override;
   void send_command(SomfyCommand command, uint32_t repeat = 4);
+  void set_code(uint16_t code);
   void set_tx(remote_transmitter::RemoteTransmitterComponent *tx) { this->tx_ = tx; }
   void set_address(uint32_t address) { this->address_ = address; }
 

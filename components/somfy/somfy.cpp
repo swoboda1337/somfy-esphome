@@ -15,11 +15,17 @@ void SomfyComponent::dump_config() {
   ESP_LOGCONFIG(TAG, "  Code: %" PRIu16, this->code_);
 }
 
-void SomfyComponent::setup() { 
+void SomfyComponent::setup() {
   // load state from nvm
   uint32_t type = fnv1_hash(std::string("Somfy: ") + format_hex(this->address_));
   this->preferences_ = global_preferences->make_preference<uint16_t>(type);
   this->preferences_.load(&this->code_);
+}
+
+void SomfyComponent::set_code(uint16_t code) {
+  ESP_LOGD(TAG, "Somfy updating code to %" PRIu16 " from %" PRIu16, code, this->code_);
+  this->code_ = code;
+  this->preferences_.save(&this->code_);
 }
 
 void SomfyComponent::send_command(SomfyCommand command, uint32_t repeat) {
@@ -60,7 +66,7 @@ void SomfyComponent::send_command(SomfyCommand command, uint32_t repeat) {
   // send frame
   for (uint32_t i = 0; i < repeat; i++) {
     esphome::remote_base::RawTimings timings = {};
-    
+
     // hardware sync, two sync for the first frame, seven for the following ones
     uint32_t syncs = (i == 0) ? 2 : 7;
     for (uint32_t j = 0; j < syncs; j++) {
