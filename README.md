@@ -1,8 +1,6 @@
-ESPHome Somfy Remote Component.
+ESPHome Somfy Remote Component. NOTE: This is a work in progress.
 
-NOTE: This is a work in progress.
-
-Example yaml to use in esphome device config:
+Example yaml (valid commands are MY, UP, MYUP, DOWN, MYDOWN, UPDOWN, PROG, SUNFLAG, FLAG):
 
     external_components:
     - source:
@@ -42,4 +40,3 @@ Example yaml to use in esphome device config:
                 command: UP
                 repeat: 1
 
-Valid commands are: MY, UP, MYUP, DOWN, MYDOWN, UPDOWN, PROG, SUNFLAG, FLAG
