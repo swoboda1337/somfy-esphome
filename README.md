@@ -1,6 +1,8 @@
 NOTE: This is a work in progress.
 
-ESPHome Somfy Remote Component. 
+ESPHome Somfy Remote Component.
+
+RF needs to use 433.42 MHz not 433.92 MHz.
 
 Example yaml (valid commands are MY, UP, MYUP, DOWN, MYDOWN, UPDOWN, PROG, SUNFLAG, FLAG):
 
