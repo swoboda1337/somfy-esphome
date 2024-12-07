@@ -39,6 +39,8 @@ void SomfyComponent::send_command(SomfyCommand command, uint32_t repeat) {
   frame[5] = this->address_ >> 8;    // remote address
   frame[6] = this->address_;         // remote address
 
+  ESP_LOGD(TAG, "Somfy sending 0x%" PRIX8 " repeated %" PRIu32 " times", command, repeat);
+
   // crc
   uint8_t crc = 0;
   for (uint8_t i = 0; i < 7; i++) {
@@ -55,8 +57,6 @@ void SomfyComponent::send_command(SomfyCommand command, uint32_t repeat) {
   // update code
   this->code_ += 1;
   this->preferences_.save(&this->code_);
-
-  ESP_LOGD(TAG, "Somfy sending 0x%" PRIX8 " repeated %" PRIu32 " times", command, repeat);
 
   // send wakup
   esphome::remote_base::RawTimings timings = {+9415, -9565};
