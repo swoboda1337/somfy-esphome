@@ -1,8 +1,6 @@
 ESPHome Somfy remote component based off of https://github.com/Legion2/Somfy_Remote_Lib/
 
-NOTE: RF needs to use 433.42 MHz not 433.92 MHz.
-
-NOTE: This is a work in progress.
+NOTE: the RF board needs to use 433.42 MHz not 433.92 MHz. There are two RFs CC1101 https://github.com/esphome/esphome/pull/6300 and SX127x https://github.com/esphome/esphome/pull/7490 that will work. Both are currently being reviewed but are usable now, see the links for more info.
 
 Example yaml (valid commands are MY, UP, MYUP, DOWN, MYDOWN, UPDOWN, PROG, SUNFLAG, FLAG):
 
