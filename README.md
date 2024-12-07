@@ -1,8 +1,8 @@
+ESPHome Somfy Remote Component based off of https://github.com/Legion2/Somfy_Remote_Lib/
+
+NOTE: RF needs to use 433.42 MHz not 433.92 MHz.
+
 NOTE: This is a work in progress.
-
-ESPHome Somfy Remote Component.
-
-RF needs to use 433.42 MHz not 433.92 MHz.
 
 Example yaml (valid commands are MY, UP, MYUP, DOWN, MYDOWN, UPDOWN, PROG, SUNFLAG, FLAG):
 
