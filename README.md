@@ -1,4 +1,4 @@
-ESPHome Somfy Remote Component based off of https://github.com/Legion2/Somfy_Remote_Lib/
+ESPHome Somfy remote component based off of https://github.com/Legion2/Somfy_Remote_Lib/
 
 NOTE: RF needs to use 433.42 MHz not 433.92 MHz.
 
