@@ -17,7 +17,6 @@ void SomfyComponent::dump_config() {
 }
 
 void SomfyComponent::setup() {
-  // load state from nvm
   uint32_t type = fnv1_hash(std::string("Somfy: ") + format_hex(this->address_));
   this->preferences_ = global_preferences->make_preference<uint16_t>(type);
   this->preferences_.load(&this->code_);
