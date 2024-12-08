@@ -92,9 +92,9 @@ void SomfyComponent::send_command(SomfyCommand command, uint32_t repeat) {
         byte <<= 1;
       }
     }
+    timings.push_back(-415);
 
     // send + inter frame silence
-    timings.push_back(-415);
     auto call = id(this->tx_).transmit();
     call.get_data()->set_data(timings);
     call.perform();
