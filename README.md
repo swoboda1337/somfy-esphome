@@ -99,11 +99,11 @@ Example yaml for Somfy:
         open_action:
           - somfy.send_command:
               id: remote_1
-              command: UP
+              command: DOWN
               repeat: 1
         close_action:
           - somfy.send_command:
               id: remote_1
-              command: DOWN
+              command: UP
               repeat: 1
         optimistic: true
