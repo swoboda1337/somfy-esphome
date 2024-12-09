@@ -2,7 +2,7 @@ ESPHome Somfy remote component based off of https://github.com/Legion2/Somfy_Rem
 
 Commands are: MY, UP, MYUP, DOWN, MYDOWN, UPDOWN, PROG, SUNFLAG, FLAG. Address should be a random 24 bit (or 6 hex digit) number. Can create any number of remotes, buttons or covers.
 
-The RF board needs to use 433.42 MHz not 433.92 MHz. There are two RFs CC1101 https://github.com/esphome/esphome/pull/6300 and SX127x https://github.com/esphome/esphome/pull/7490 that will work. Both are currently being reviewed but are usable now, see the links for more info.
+The RF board needs to use 433.42 MHz not 433.92 MHz. There are two RFs CC1101 https://github.com/esphome/esphome/pull/6300 and SX127x https://github.com/esphome/esphome/pull/7490 that will work. They are currently being reviewed, but are usable, see the links for more info.
 
 Example yaml for CC1101 (update pins for your board):
 
