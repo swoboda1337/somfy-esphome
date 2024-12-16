@@ -58,51 +58,42 @@ void SomfyComponent::send_command(SomfyCommand command, uint32_t repeat) {
   this->code_ += 1;
   this->preferences_.save(&this->code_);
 
-  // send wakup
-  esphome::remote_base::RawTimings timings = {+9415, -9565};
-  auto call = id(this->tx_).transmit();
-  call.get_data()->set_data(timings);
-  call.perform();
-  delay(80);
-
   // send frame
+  auto call = id(this->tx_).transmit();
+  remote_base::RemoteTransmitData *dst = call.get_data();
+  dst->item(9415, 9565);
+  dst->space(80000);
   for (uint32_t i = 0; i < (repeat + 1); i++) {
-    esphome::remote_base::RawTimings timings = {};
-
     // hardware sync, two sync for the first frame, seven for the following ones
     uint32_t syncs = (i == 0) ? 2 : 7;
     for (uint32_t j = 0; j < syncs; j++) {
-      timings.push_back(+SYMBOL * 4);
-      timings.push_back(-SYMBOL * 4);
+      dst->item(SYMBOL * 4, SYMBOL * 4);
     }
 
     // software sync
-    timings.push_back(+4550);
-    timings.push_back(-SYMBOL);
+    dst->item(4550, SYMBOL);
 
     // data
     for (uint8_t byte : frame) {
       for (uint32_t j = 0; j < 8; j++) {
         if ((byte & 0x80) != 0) {
-          timings.push_back(-SYMBOL);
-          timings.push_back(+SYMBOL);
+          dst->space(SYMBOL);
+          dst->mark(SYMBOL);
         } else {
-          timings.push_back(+SYMBOL);
-          timings.push_back(-SYMBOL);
+          dst->mark(SYMBOL);
+          dst->space(SYMBOL);
         }
         byte <<= 1;
       }
     }
-    timings.push_back(-415);
 
-    // send + inter frame silence
-    auto call = id(this->tx_).transmit();
-    call.get_data()->set_data(timings);
-    call.perform();
+    // inter frame silence
+    dst->space(415);
     if (i < repeat) {
-      delay(30);
+      dst->space(30000);
     }
   }
+  call.perform();
 }
 
 bool SomfyComponent::on_receive(remote_base::RemoteReceiveData data) {

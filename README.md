@@ -36,7 +36,7 @@ Example yaml for CC1101 (update pins for your board):
         then:
           - cc1101.end_tx: cc1101_id
 
-Example yaml for SX127x, only works with ESP-IDF framework (update pins for your board):
+Example yaml for SX127x (update pins for your board):
 
     external_components:
       - source: github://pr#7770
