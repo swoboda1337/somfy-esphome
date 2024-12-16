@@ -9,7 +9,6 @@ Example yaml for CC1101 (update pins for your board):
     external_components:
       - source: github://pr#6300
         components: [ cc1101 ]
-        refresh: 5min
 
     spi:
       clk_pin: GPIO18
@@ -22,6 +21,11 @@ Example yaml for CC1101 (update pins for your board):
       bandwidth: 200
       frequency: 433420
 
+    remote_receiver:
+      pin: GPIO12
+      filter: 200us
+      idle: 6000us
+
     remote_transmitter:
       pin: GPIO13
       carrier_duty_percent: 100%
@@ -32,12 +36,13 @@ Example yaml for CC1101 (update pins for your board):
         then:
           - cc1101.end_tx: cc1101_id
 
-Example yaml for SX127x (update pins for your board):
+Example yaml for SX127x, only works with ESP-IDF framework (update pins for your board):
 
     external_components:
+      - source: github://pr#7770
+        components: [ remote_base, remote_receiver, remote_transmitter, esp32_rmt ]
       - source: github://pr#7490
         components: [ sx127x ]
-        refresh: 5min
 
     spi:
       clk_pin: GPIO5
@@ -54,8 +59,18 @@ Example yaml for SX127x (update pins for your board):
       pa_pin: BOOST
       pa_power: 17
 
+    remote_receiver:
+      pin:
+        number: GPIO32
+        allow_other_uses: true
+      filter: 200us
+      idle: 6000us
+
     remote_transmitter:
-      pin: GPIO32
+      pin:
+        number: GPIO32
+        allow_other_uses: true
+      one_wire: true
       carrier_duty_percent: 100%
       on_transmit:
         then:

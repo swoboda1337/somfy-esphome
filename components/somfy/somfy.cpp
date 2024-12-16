@@ -20,6 +20,7 @@ void SomfyComponent::setup() {
   uint32_t type = fnv1_hash(std::string("Somfy: ") + format_hex(this->address_));
   this->preferences_ = global_preferences->make_preference<uint16_t>(type);
   this->preferences_.load(&this->code_);
+  this->rx_->register_listener(this);
 }
 
 void SomfyComponent::set_code(uint16_t code) {
@@ -102,6 +103,60 @@ void SomfyComponent::send_command(SomfyCommand command, uint32_t repeat) {
       delay(30);
     }
   }
+}
+
+bool SomfyComponent::on_receive(remote_base::RemoteReceiveData data) {
+  for (uint32_t i = 0; i < 2; i++) {
+    if (!data.expect_item(SYMBOL * 4, SYMBOL * 4)) {
+      return true;
+    }
+  }
+  if (!data.expect_mark(4550)) {
+    for (uint32_t i = 0; i < 5; i++) {
+      if (!data.expect_item(SYMBOL * 4, SYMBOL * 4)) {
+        return true;
+      }
+    }
+    if (!data.expect_mark(4550)) {
+      return true;
+    }
+  }
+  data.expect_space(SYMBOL);
+
+  uint8_t frame[7];
+  for (uint8_t &byte : frame) {
+    for (uint32_t i = 0; i < 8; i++) {
+      byte <<= 1;
+      if (data.expect_mark(SYMBOL) || data.expect_mark(SYMBOL * 2)) {
+        data.expect_space(SYMBOL);
+        byte |= 0;
+      } else if (data.expect_space(SYMBOL) || data.expect_space(SYMBOL * 2)) {
+        data.expect_mark(SYMBOL);
+        byte |= 1;
+      } else {
+        return true;
+      }
+    }
+  }
+
+  for (uint8_t i = 6; i >= 1; i--) {
+    frame[i] ^= frame[i - 1];
+  }
+
+  uint8_t crc = 0;
+  for (uint8_t i = 0; i < 7; i++) {
+    crc ^= frame[i];
+    crc ^= frame[i] >> 4;
+  }
+  if ((crc & 0xF) == 0) {
+    uint8_t command = frame[1] >> 4;
+    uint16_t code = (frame[2] << 8) | frame[3];
+    uint32_t address = (frame[4] << 16) | (frame[5] << 8) | frame[6];
+    ESP_LOGD(TAG, "Received: command: %" PRIx8 ", code: %" PRIu16 ", address %" PRIx32,
+             command, code, address);
+  }
+
+  return true;
 }
 
 }  // namespace somfy
