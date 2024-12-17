@@ -27,9 +27,13 @@ SOMFY_COMMAND = {
     "DOWN": SomfyCommand.SOMFY_DOWN,
     "MYDOWN": SomfyCommand.SOMFY_MYDOWN,
     "UPDOWN": SomfyCommand.SOMFY_UPDOWN,
+    "MYUPDOWN": SomfyCommand.SOMFY_MYUPDOWN,
     "PROG": SomfyCommand.SOMFY_PROG,
     "SUNFLAG": SomfyCommand.SOMFY_SUNFLAG,
     "FLAG": SomfyCommand.SOMFY_FLAG,
+    "STEPDOWN": SomfyCommand.SOMFY_STEPDOWN,
+    "TOGGLE": SomfyCommand.SOMFY_TOGGLE,
+    "SENSOR": SomfyCommand.SOMFY_SENSOR,
 }
 
 CONFIG_SCHEMA = cv.Schema(

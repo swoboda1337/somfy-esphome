@@ -14,9 +14,19 @@ enum SomfyCommand : uint8_t {
     SOMFY_DOWN = 0x4,
     SOMFY_MYDOWN = 0x5,
     SOMFY_UPDOWN = 0x6,
+    SOMFY_MYUPDOWN = 0x7,
     SOMFY_PROG = 0x8,
     SOMFY_SUNFLAG = 0x9,
-    SOMFY_FLAG = 0xA
+    SOMFY_FLAG = 0xA,
+    SOMFY_STEPDOWN = 0xB,
+    SOMFY_TOGGLE = 0xC,
+    SOMFY_SENSOR = 0xE,
+};
+
+class SomfySensor {
+ public:
+  virtual void update_sunny(uint32_t address, bool value) {}
+  virtual void update_windy(uint32_t address, bool value) {}
 };
 
 class SomfyComponent : public Component, public remote_base::RemoteReceiverListener {
@@ -30,12 +40,14 @@ class SomfyComponent : public Component, public remote_base::RemoteReceiverListe
   void set_tx(remote_transmitter::RemoteTransmitterComponent *tx) { this->tx_ = tx; }
   void set_rx(remote_receiver::RemoteReceiverComponent *rx) { this->rx_ = rx; }
   void set_address(uint32_t address) { this->address_ = address; }
+  void add_sensor(SomfySensor *sensor) { this->sensors_.push_back(sensor); }
  protected:
   remote_transmitter::RemoteTransmitterComponent *tx_{nullptr};
   remote_receiver::RemoteReceiverComponent *rx_{nullptr};
   ESPPreferenceObject preferences_;
   uint32_t address_;
   uint16_t code_;
+  std::vector<SomfySensor *> sensors_;
 };
 
 }  // namespace acurite
