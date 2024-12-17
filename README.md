@@ -91,12 +91,14 @@ Example yaml for Somfy:
     somfy:
       - address: 0x111111
         id: remote_1
-      - address: 0x222222
-        id: remote_2
-      - address: 0x333333
-        id: remote_3
-      - address: 0x444444
-        id: remote_4
+
+    binary_sensor:
+      - platform: somfy
+        address: 0x222222
+        sunny:
+          name: "Sunny"
+        windy:
+          name: "Windy"
 
     button:
       - platform: template
