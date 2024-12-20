@@ -97,20 +97,18 @@ void SomfyComponent::send_command(SomfyCommand command, uint32_t repeat) {
 }
 
 bool SomfyComponent::on_receive(remote_base::RemoteReceiveData data) {
-  for (uint32_t i = 0; i < 2; i++) {
-    if (!data.expect_item(SYMBOL * 4, SYMBOL * 4)) {
+  uint8_t sync_count = 0;
+  while (true) {
+    if (data.expect_item(SYMBOL * 4, SYMBOL * 4)) {
+      sync_count++;
+    } else if (data.expect_mark(4550)) {
+      break;
+    } else {
       return true;
     }
   }
-  if (!data.expect_mark(4550)) {
-    for (uint32_t i = 0; i < 5; i++) {
-      if (!data.expect_item(SYMBOL * 4, SYMBOL * 4)) {
-        return true;
-      }
-    }
-    if (!data.expect_mark(4550)) {
-      return true;
-    }
+  if (sync_count < 2) {
+    return true;
   }
   data.expect_space(SYMBOL);
 
