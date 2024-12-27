@@ -60,6 +60,7 @@ Example yaml for SX127x (update pins for your board):
       pa_power: 17
 
     remote_receiver:
+      id: rx_id
       pin:
         number: GPIO32
         allow_other_uses: true
@@ -67,17 +68,23 @@ Example yaml for SX127x (update pins for your board):
       idle: 6000us
 
     remote_transmitter:
+      id: tx_id
       pin:
         number: GPIO32
         allow_other_uses: true
       one_wire: true
+      eot_level: false
       carrier_duty_percent: 100%
       on_transmit:
         then:
-          - sx127x.set_mode_tx: sx127x_id
+          - sx127x.set_mode_standby
+          - lambda: 'id(tx_id)->digital_write(false);'
+          - sx127x.set_mode_tx
       on_complete:
         then:
-          - sx127x.set_mode_rx: sx127x_id
+          - sx127x.set_mode_standby
+          - lambda: 'id(tx_id)->digital_write(true);'
+          - sx127x.set_mode_rx
 
 Example yaml for Somfy:
 
