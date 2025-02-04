@@ -55,7 +55,6 @@ Example yaml for SX127x (update pins for your board):
       rst_pin: GPIO23
       frequency: 433420000
       modulation: OOK
-      rx_start: false
       pa_pin: BOOST
       pa_power: 17
 

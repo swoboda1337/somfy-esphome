@@ -59,7 +59,7 @@ void SomfyComponent::send_command(SomfyCommand command, uint32_t repeat) {
   this->preferences_.save(&this->code_);
 
   // send frame
-  auto call = id(this->tx_).transmit();
+  auto call = this->tx_->transmit();
   remote_base::RemoteTransmitData *dst = call.get_data();
   dst->item(9415, 9565);
   dst->space(80000);
@@ -98,13 +98,14 @@ void SomfyComponent::send_command(SomfyCommand command, uint32_t repeat) {
 
 bool SomfyComponent::on_receive(remote_base::RemoteReceiveData data) {
   uint8_t sync_count = 0;
-  while (true) {
+  while (data.is_valid(0)) {
     if (data.expect_item(SYMBOL * 4, SYMBOL * 4)) {
       sync_count++;
-    } else if (data.expect_mark(4550)) {
+    } else if (data.expect_mark(4550) && sync_count >= 2) {
       break;
     } else {
-      return true;
+      data.advance();
+      sync_count = 0;
     }
   }
   if (sync_count < 2) {
