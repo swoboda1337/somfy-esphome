@@ -99,14 +99,14 @@ void SomfyComponent::send_command(SomfyCommand command, uint32_t repeat) {
 bool SomfyComponent::on_receive(remote_base::RemoteReceiveData data) {
   uint8_t sync_count = 0;
   while (data.is_valid(0)) {
-    if (data.expect_item(SYMBOL * 4, SYMBOL * 4)) {
+    while (data.expect_item(SYMBOL * 4, SYMBOL * 4)) {
       sync_count++;
-    } else if (data.expect_mark(4550) && sync_count >= 2) {
-      break;
-    } else {
-      data.advance();
-      sync_count = 0;
     }
+    if (sync_count >= 2 && data.expect_mark(4550)) {
+      break;
+    }
+    sync_count = 0;
+    data.advance();
   }
   if (sync_count < 2) {
     return true;
