@@ -2,7 +2,6 @@
 #include "esphome/core/helpers.h"
 #include "esphome/core/hal.h"
 #include "somfy.h"
-#include <cinttypes>
 
 namespace esphome {
 namespace somfy {
@@ -98,7 +97,7 @@ void SomfyComponent::send_command(SomfyCommand command, uint32_t repeat) {
 
 bool SomfyComponent::on_receive(remote_base::RemoteReceiveData data) {
   uint8_t sync_count = 0;
-  while (data.is_valid(0)) {
+  while (data.is_valid()) {
     while (data.expect_item(SYMBOL * 4, SYMBOL * 4)) {
       sync_count++;
     }
