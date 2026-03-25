@@ -69,6 +69,7 @@ async def to_code(config):
             cv.Required(CONF_REPEAT): cv.templatable(cv.int_range(min=0, max=5)),
         }
     ),
+    synchronous=True,
 )
 async def somfy_send_command_to_code(config, action_id, template_arg, args):
     paren = await cg.get_variable(config[CONF_ID])
@@ -88,6 +89,7 @@ async def somfy_send_command_to_code(config, action_id, template_arg, args):
             cv.Required(CONF_CODE): cv.templatable(cv.uint16_t),
         }
     ),
+    synchronous=True,
 )
 async def somfy_set_code_to_code(config, action_id, template_arg, args):
     paren = await cg.get_variable(config[CONF_ID])
