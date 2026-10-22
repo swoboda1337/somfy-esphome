@@ -1,3 +1,5 @@
+#include <cinttypes>
+#include <cstdio>
 #include "esphome/core/log.h"
 #include "esphome/core/helpers.h"
 #include "esphome/core/hal.h"
@@ -16,10 +18,12 @@ void SomfyComponent::dump_config() {
 }
 
 void SomfyComponent::setup() {
-  uint32_t type = fnv1_hash(std::string("Somfy: ") + format_hex(this->address_));
+  // Same key as the old format_hex() string so stored rolling codes survive
+  char key[16];
+  snprintf(key, sizeof(key), "Somfy: %08" PRIx32, this->address_);
+  uint32_t type = fnv1_hash(std::string(key));
   this->preferences_ = global_preferences->make_preference<uint16_t>(type);
   this->preferences_.load(&this->code_);
-  this->rx_->register_listener(this);
 }
 
 void SomfyComponent::set_code(uint16_t code) {

@@ -1,7 +1,6 @@
 from esphome import automation
 import esphome.codegen as cg
-from esphome.components import remote_transmitter
-from esphome.components import remote_receiver
+from esphome.components import remote_base, remote_receiver, remote_transmitter
 import esphome.config_validation as cv
 from esphome.const import CONF_ID, CONF_ADDRESS
 
@@ -53,9 +52,8 @@ async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
     await cg.register_component(var, config)
     transmitter = await cg.get_variable(config[CONF_TRANSMITTER_ID])
-    receiver = await cg.get_variable(config[CONF_RECEIVER_ID])
     cg.add(var.set_tx(transmitter))
-    cg.add(var.set_rx(receiver))
+    await remote_base.register_listener(var, config)
     cg.add(var.set_address(config[CONF_ADDRESS]))
 
 
