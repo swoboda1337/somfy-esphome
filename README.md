@@ -104,17 +104,25 @@ Every `somfy:` entry decodes every frame on the band, not just its own address. 
                     condition:
                       lambda: 'return command == 0x2;'
                     then:
-                      - cover.open: my_cover
+                      - cover.template.publish:
+                          id: my_cover
+                          state: OPEN
                 - if:
                     condition:
                       lambda: 'return command == 0x4;'
                     then:
-                      - cover.close: my_cover
+                      - cover.template.publish:
+                          id: my_cover
+                          state: CLOSED
                 - if:
                     condition:
                       lambda: 'return command == 0x1;'
                     then:
-                      - cover.stop: my_cover
+                      - cover.template.publish:
+                          id: my_cover
+                          current_operation: IDLE
+
+This only updates the reported state. Calling `cover.open`, `cover.close` or `cover.stop` instead would run the cover's actions and transmit the command again on this remote's address. If the cover has no publish action (for example `time_based`), guard its actions with a global that the trigger sets while it is syncing.
 
 Example yaml for Somfy:
 
