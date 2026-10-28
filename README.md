@@ -84,6 +84,38 @@ Example yaml for SX127x (update pins for your board):
           - remote_transmitter.digital_write: true
           - sx127x.set_mode_rx
 
+Every `somfy:` entry decodes every frame on the band, not just its own address. Use `on_command` to react to frames from other remotes, for example to keep a cover in sync when a physical remote is used. The trigger gets `address` (24 bit), `command` (the 4 bit command, see the enum above) and `code` (the 16 bit rolling code). A single button press sends the same frame two or three times with the same rolling code, so compare `code` to the last one seen if you only want to act once per press:
+
+    globals:
+      - id: last_code
+        type: uint16_t
+        initial_value: '0'
+
+    somfy:
+      - address: 0x111111
+        id: remote_1
+        on_command:
+          - if:
+              condition:
+                lambda: 'return address == 0xAABBCC && code != id(last_code);'
+              then:
+                - lambda: 'id(last_code) = code;'
+                - if:
+                    condition:
+                      lambda: 'return command == 0x2;'
+                    then:
+                      - cover.open: my_cover
+                - if:
+                    condition:
+                      lambda: 'return command == 0x4;'
+                    then:
+                      - cover.close: my_cover
+                - if:
+                    condition:
+                      lambda: 'return command == 0x1;'
+                    then:
+                      - cover.stop: my_cover
+
 Example yaml for Somfy:
 
     external_components:
