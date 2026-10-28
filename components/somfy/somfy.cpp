@@ -153,6 +153,7 @@ bool SomfyComponent::on_receive(remote_base::RemoteReceiveData data) {
         sensor->update_sunny(address, (code & 2) != 0);
       }
     }
+    this->command_callback_.call(address, command, code);
   }
 
   return true;

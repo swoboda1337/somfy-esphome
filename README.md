@@ -84,6 +84,46 @@ Example yaml for SX127x (update pins for your board):
           - remote_transmitter.digital_write: true
           - sx127x.set_mode_rx
 
+Every `somfy:` entry decodes every frame on the band, not just its own address. Use `on_command` to react to frames from other remotes, for example to keep a cover in sync when a physical remote is used. The trigger gets `address` (24 bit), `command` (the 4 bit command, see the enum above) and `code` (the 16 bit rolling code). A single button press sends the same frame two or three times with the same rolling code, so compare `code` to the last one seen if you only want to act once per press:
+
+    globals:
+      - id: last_code
+        type: uint16_t
+        initial_value: '0'
+
+    somfy:
+      - address: 0x111111
+        id: remote_1
+        on_command:
+          - if:
+              condition:
+                lambda: 'return address == 0xAABBCC && code != id(last_code);'
+              then:
+                - lambda: 'id(last_code) = code;'
+                - if:
+                    condition:
+                      lambda: 'return command == 0x2;'
+                    then:
+                      - cover.template.publish:
+                          id: my_cover
+                          state: OPEN
+                - if:
+                    condition:
+                      lambda: 'return command == 0x4;'
+                    then:
+                      - cover.template.publish:
+                          id: my_cover
+                          state: CLOSED
+                - if:
+                    condition:
+                      lambda: 'return command == 0x1;'
+                    then:
+                      - cover.template.publish:
+                          id: my_cover
+                          current_operation: IDLE
+
+This only updates the reported state. Calling `cover.open`, `cover.close` or `cover.stop` instead would run the cover's actions and transmit the command again on this remote's address. If the cover has no publish action (for example `time_based`), guard its actions with a global that the trigger sets while it is syncing.
+
 Example yaml for Somfy:
 
     external_components:

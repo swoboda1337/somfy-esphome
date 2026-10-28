@@ -2,7 +2,8 @@ from esphome import automation
 import esphome.codegen as cg
 from esphome.components import remote_base, remote_receiver, remote_transmitter
 import esphome.config_validation as cv
-from esphome.const import CONF_ID, CONF_ADDRESS
+from esphome.types import ConfigType
+from esphome.const import CONF_ID, CONF_ADDRESS, CONF_TRIGGER_ID
 
 CODEOWNERS = ["@swoboda1337"]
 DEPENDENCIES = ["remote_transmitter", "remote_receiver"]
@@ -12,11 +13,15 @@ CONF_RECEIVER_ID = "receiver_id"
 CONF_COMMAND = "command"
 CONF_REPEAT = "repeat"
 CONF_CODE = "code"
+CONF_ON_COMMAND = "on_command"
 
 somfy_ns = cg.esphome_ns.namespace("somfy")
 SomfyComponent = somfy_ns.class_("SomfyComponent", cg.Component)
 SomfySendCommandAction = somfy_ns.class_("SomfySendCommandAction", automation.Action)
 SomfySetCodeAction = somfy_ns.class_("SomfySetCodeAction", automation.Action)
+SomfyCommandTrigger = somfy_ns.class_(
+    "SomfyCommandTrigger", automation.Trigger.template(cg.uint32, cg.uint8, cg.uint16)
+)
 
 SomfyCommand = somfy_ns.enum("SomfyCommand")
 SOMFY_COMMAND = {
@@ -45,16 +50,28 @@ CONFIG_SCHEMA = cv.Schema(
             remote_receiver.RemoteReceiverComponent
         ),
         cv.Required(CONF_ADDRESS): cv.hex_uint32_t,
+        cv.Optional(CONF_ON_COMMAND): automation.validate_automation(
+            {
+                cv.GenerateID(CONF_TRIGGER_ID): cv.declare_id(SomfyCommandTrigger),
+            }
+        ),
     }
 )
 
-async def to_code(config):
+async def to_code(config: ConfigType) -> None:
     var = cg.new_Pvariable(config[CONF_ID])
     await cg.register_component(var, config)
     transmitter = await cg.get_variable(config[CONF_TRANSMITTER_ID])
     cg.add(var.set_tx(transmitter))
     await remote_base.register_listener(var, config)
     cg.add(var.set_address(config[CONF_ADDRESS]))
+    for conf in config.get(CONF_ON_COMMAND, []):
+        trigger = cg.new_Pvariable(conf[CONF_TRIGGER_ID], var)
+        await automation.build_automation(
+            trigger,
+            [(cg.uint32, "address"), (cg.uint8, "command"), (cg.uint16, "code")],
+            conf,
+        )
 
 
 @automation.register_action(

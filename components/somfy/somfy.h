@@ -1,5 +1,6 @@
 #pragma once
 
+#include "esphome/core/automation.h"
 #include "esphome/core/preferences.h"
 #include "esphome/components/remote_transmitter/remote_transmitter.h"
 
@@ -39,13 +40,25 @@ class SomfyComponent : public Component, public remote_base::RemoteReceiverListe
   void set_tx(remote_transmitter::RemoteTransmitterComponent *tx) { this->tx_ = tx; }
   void set_address(uint32_t address) { this->address_ = address; }
   void add_sensor(SomfySensor *sensor) { this->sensors_.push_back(sensor); }
+  void add_on_command_callback(std::function<void(uint32_t, uint8_t, uint16_t)> &&callback) {
+    this->command_callback_.add(std::move(callback));
+  }
  protected:
   remote_transmitter::RemoteTransmitterComponent *tx_{nullptr};
   ESPPreferenceObject preferences_;
   uint32_t address_;
   uint16_t code_;
   std::vector<SomfySensor *> sensors_;
+  CallbackManager<void(uint32_t, uint8_t, uint16_t)> command_callback_;
 };
 
-}  // namespace acurite
+class SomfyCommandTrigger : public Trigger<uint32_t, uint8_t, uint16_t> {
+ public:
+  explicit SomfyCommandTrigger(SomfyComponent *parent) {
+    parent->add_on_command_callback(
+        [this](uint32_t address, uint8_t command, uint16_t code) { this->trigger(address, command, code); });
+  }
+};
+
+}  // namespace somfy
 }  // namespace esphome
